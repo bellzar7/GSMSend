@@ -14,59 +14,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json())
-app.post('/post', upload.single('file'), (req, res) => {
-
-    const file = req.file
-    const { name, phone, email, comment, to } = req.body
-
-    // Перевірка на обов'язкові поля (name та phone)
-    if (!name || !email) {
-        return res.status(400).send('Name and phone are required');
-    }
-
-    // Формування тексту електронного листа
-    let mailText = `Name - ${name}\nEmail - ${email}`;
-    if (phone) mailText += `\nPhone - ${phone}`;
-    if (comment) mailText += `\nComment - ${comment}`;
-
-    // Відправити електронного листа з файлом
-    const nodemailer = require('nodemailer');
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'agencyznaesh@gmail.com',
-            pass: 'paaqbhzbjnjxpssb'
-        }
-    });
-
-    // Перевірка, чи є файл, перед його додаванням до вкладення
-    let attachments = [];
-    if (file && file.originalname && file.path) {
-        attachments.push({
-            filename: file.originalname,
-            path: file.path
-        });
-    }
-    let mailOptions = {
-        from: email,
-        to: to,
-        subject: 'New lead from website',
-        text: mailText,
-        attachments: attachments
-    };
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            return console.log(error);
-        }
-        console.log('Message sent: %s', info.messageId);
-    });
-
-
-    // Відповідь користувачеві
-    res.send({response: 'Message send!'});
-});
-
-
 
 // Обробник для маршруту '/postImage'
 app.post('/sendImage', upload.any(), async (req, res) => {
