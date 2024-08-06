@@ -2,7 +2,7 @@ const express = require('express');
 const multer  = require('multer');
 const storage = multer.memoryStorage(); // Зберігає файли в пам'яті
 const upload = multer({ storage });
-const app = express();
+const index = express();
 const cors = require('cors');
 const nodemailer = require("nodemailer");
 const sharp = require('sharp');
@@ -12,11 +12,11 @@ const corsOptions = {
     methods: ['POST'], // Дозволяє тільки POST запити
 };
 
-app.use(cors(corsOptions));
-app.use(express.json())
+index.use(cors(corsOptions));
+index.use(express.json())
 
 // Обробник для маршруту '/postImage'
-app.post('/sendImage', upload.any(), async (req, res) => {
+index.post('/sendImage', upload.any(), async (req, res) => {
     try {
         // Отримуємо перший файл з масиву файлів
         const file = req.files[0];
@@ -67,15 +67,15 @@ async function sendEmail(photoBuffer) {
     await transporter.sendMail(mailOptions);
 }
 
-app.use((err, req, res, next) => {
+index.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(err.status || 500).send(err.message || 'Internal Server Error');
 });
 
-app.get('/', (req, res) => {
+index.get('/', (req, res) => {
     res.status(200).json('Health check works!')
 })
 
-app.listen(3001, () => {
+index.listen(3001, () => {
     console.log('Server started on http://localhost:3001');
 });
